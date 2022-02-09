@@ -1,8 +1,8 @@
 <h1 class="app_title">memo</h1>
 <article>
   <ul>
-    <% @title_list.zip(@id_list).each do |title, id| %>
-    <li><a href="http://localhost:4567/memos/<%= id %>" class="link"><%= title %></a></li>
+    <% @memos.each do |memo| %>
+    <li><a href="http://localhost:4567/memos/<%= memo[:id] %>" class="link"><%= memo[:title] %></a></li>
     <% end %>
   </ul>
 </article>

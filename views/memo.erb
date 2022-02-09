@@ -11,13 +11,13 @@
       </form>
     </li>
     <li>
-      <form action="/memos/<%= params['id'] %>" method="post">
+      <form action="/memos/<%= params[:id] %>" method="post">
         <input type="hidden" name="_method" value="DELETE">
         <input type="image" src="/images/ふたの開いたゴミ箱のアイコン.svg" alt="削除" width="32" height="32">
       </form>
     </li>
     <li>
-      <form action="/edit/<%= params['id'] %>" method="get">
+      <form action="/memos/<%= params[:id] %>/edit" method="get">
         <input type="image" src="/images/紙とペンのアイコン素材.svg" alt="変更" width="32" height="32">
       </form>
     </li>

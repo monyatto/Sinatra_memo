@@ -13,16 +13,18 @@ helpers do
   end
 
   def parse_json
-    json_files = []
-    Dir.glob('*', base: './data').each do |file_name|
+    Dir.glob('*', base: './data').map do |file_name|
       File.open("./data/#{file_name}") do |file|
-        json_files << JSON.parse(file.read)
+        JSON.parse(file.read, symbolize_names: true)
       end
     end
-    json_files = json_files.sort do |a, b|
-      [a['time']] <=> [b['time']]
+  end
+
+  def sort_files(files)
+    files.sort do |a, b|
+      [a[:time]] <=> [b[:time]]
     end
-    json_files.reverse!
+    files.reverse
   end
 end
 
@@ -31,15 +33,7 @@ get '/new' do
 end
 
 get '/memos' do
-  json_files = parse_json
-
-  @title_list = []
-  @id_list = []
-
-  json_files.each do |file|
-    @title_list << file['title']
-    @id_list << file['id']
-  end
+  @memos = sort_files(parse_json)
   erb :memos
 end
 
@@ -47,51 +41,40 @@ post '/memos' do
   @id = SecureRandom.uuid
   @title = params[:title]
   @content = params[:content]
-  hash = { 'id' => @id, 'time' => Time.new, 'title' => @title, 'content' => @content }
-  File.open("./data/#{hash['id']}", 'w') do |file|
+  hash = { id: @id, time: Time.new, title: @title, content: @content }
+  File.open("./data/#{hash[:id]}", 'w') do |file|
     JSON.dump(hash, file)
   end
   redirect to("/memos/#{@id}")
 end
 
-get '/result' do
-  json_files = parse_json
-  @title_list = []
-  @content_list = []
-
-  json_files.each do |file|
-    @title_list << file['title']
-    @content_list << file['content']
-  end
-
-  @title = @title_list[0]
-  @content = @content_list[0]
-  erb :result
-end
-
 get '/memos/:id' do |id|
-  @title = sanitize(JSON.parse(File.open("./data/#{id}").read)['title'])
-  @content = sanitize(JSON.parse(File.open("./data/#{id}").read)['content'])
+  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
+  @title = sanitize(json_file[:title])
+  @content = sanitize(json_file[:content])
   erb :memo
 end
 
 delete '/memos/:id' do
-  File.delete("data/#{params['id']}")
+  File.delete("data/#{params[:id]}")
   redirect to('/memos')
 end
 
-get '/edit/:id' do |id|
-  @title = sanitize(JSON.parse(File.open("./data/#{id}").read)['title'])
-  @content = sanitize(JSON.parse(File.open("./data/#{id}").read)['content'])
+get '/memos/:id/edit' do |id|
+  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
+  @title = sanitize(json_file[:title])
+  @content = sanitize(json_file[:content])
   erb :edit
 end
 
-patch '/edit/:id' do |id|
-  @time = JSON.parse(File.open("./data/#{id}"))['time']
+patch '/memos/:id/edit' do |id|
+  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
+  @time = json_file[:time]
   @title = params[:title]
   @content = params[:content]
-  hash = { 'id' => params['id'], 'time' => @time, 'title' => @title, 'content' => @content }
-  File.open("./data/#{params['id']}", 'w') do |file|
+
+  hash = { id: params[:id], time: @time, title: @title, content: @content }
+  File.open("./data/#{params[:id]}", 'w') do |file|
     JSON.dump(hash, file)
   end
   redirect to("/memos/#{id}")
@@ -99,8 +82,4 @@ end
 
 not_found do
   erb :not_found
-end
-
-def memo
-  Memo.new
 end
