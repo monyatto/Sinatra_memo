@@ -67,7 +67,7 @@ get '/memos/:id/edit' do |id|
   erb :edit
 end
 
-patch '/memos/:id/edit' do |id|
+patch '/memos/:id' do |id|
   json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
   @time = json_file[:time]
   @title = params[:title]

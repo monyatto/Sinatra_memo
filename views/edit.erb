@@ -1,5 +1,5 @@
 <h1 class="app_title"><a href="http://localhost:4567/memos">memo</a></h1>
-<form action="/memos/<%= params[:id] %>/edit" method="post" class="memo_form">
+<form action="/memos/<%= params[:id] %>" method="post" class="memo_form">
   <input type="hidden" name="_method" value="PATCH">
   <label for="title">タイトル</label>
   <input type= "text" name="title" value="<%= @title %>" maxlength=20>
