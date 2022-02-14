@@ -1,0 +1,230 @@
+/*
+////////////////////////////////////////
+reset.css を読み込んで全てのスタイルをなくす
+////////////////////////////////////////
+*/
+
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*
+////////////////////////////////////////
+reset.css では足りない初期化を追加
+////////////////////////////////////////
+*/
+
+/* 全てに box-sizing: border-box; を適用 */
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+/* 画像に関する初期設定 */
+img {
+  /* 大きい画像がはみ出さないように */
+  max-width: 100%;
+  /* 画像周りの無駄なスペースができないように */
+  vertical-align: bottom;
+}
+
+[data-whatinput="mouse"] *:focus,
+[data-whatinput="touch"] *:focus {
+  outline: none;
+}
+
+/*
+////////////////////////////////////////
+初期設定
+////////////////////////////////////////
+*/
+
+body {
+  padding: 32px 0;
+  color: #56564f;
+}
+
+article {
+  width: 640px;
+  margin: 0 auto;
+}
+
+/*
+////////////////////////////////////////
+以下に自分なりのCSSを書いて読みやすくする
+////////////////////////////////////////
+*/
+
+a,body,input{
+  letter-spacing: 0.08em;
+}
+
+body {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  background-image: linear-gradient(to top, #dad4ec 0%, #dad4ec 1%, #f3e7e9 100%);
+  color: #b5abac;
+  line-height: 1.8;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+article,
+.memo_form{
+  width: 620px;
+  max-width: 100%;
+  padding: 4rem 2rem;
+  border: none;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 180%);
+  box-shadow: 1px 1px 10px rgb(0 0 0 / 3%);
+  margin: 0 auto;
+}
+
+.app_title,
+.app_title a,
+.app_title a:hover {
+  font-family: 'Courier Prime', monospace;
+  font-weight: bold;
+  text-align: center;
+  font-size: 4.25rem;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+}
+
+.app_title a{
+  text-decoration: none;
+}
+
+.memo_title{
+  font-weight: bold;
+  font-size: 24px;
+  padding-bottom: 10px;
+}
+
+p{
+  font-size: 18px;
+  padding-bottom: 20px;
+
+}
+
+.menu{
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu li{
+  padding: 0 15px;
+  filter: drop-shadow(1px 1px 5px rgb(0 0 0 / 10%));
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  border-radius: 6px;
+  border: none;
+  background: rgb(255 255 255 / 0%);
+  box-shadow:1px 1px 3px 1px #e4dada inset;
+  padding: 10px;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 16px;
+  color: #b5abac;
+  margin-bottom:10px;
+}
+
+textarea {
+  resize: none;
+  height: 240px;
+}
+
+input[type="submit"]{
+  border:none;
+  border-radius: 100vh;
+  padding: 10px 30px;
+  color: #fff;
+  background-color: #dad4ec;
+  font-weight: bold;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 16px;
+  display: block;
+  margin: 0 auto;
+}
+
+.link{
+  text-decoration:none;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 16px;
+  color: #b5abac;
+}
+
+a {color: #b5abac
+}
+
+a:hover {
+  color: #c5dcec;
+  font-weight: bold;
+}
+
+.app_title a:hover,
+input[type="submit"]:hover,
+input[type="image"]:hover{
+  filter: alpha(opacity=70);
+  -moz-opacity: 0.7;
+  opacity: 0.7;
+}
+
+textarea,
+input[type="text"]:focus {
+  border: none;
+  outline: 0;
+}

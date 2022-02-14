@@ -1,0 +1,17 @@
+<h1 class="app_title">memo</h1>
+<article>
+  <ul>
+    <% @memos.each do |memo| %>
+    <li><a href="http://localhost:4567/memos/<%= memo[:id] %>" class="link"><%= memo[:title] %></a></li>
+    <% end %>
+  </ul>
+</article>
+<nav>
+  <ul class="menu">
+    <li>
+      <form action="/new" method="get">
+        <input type="image" src="/images/プラスのアイコン素材.svg" alt="新規作成" width="32" height="32">
+      </form>
+    </li>
+  </ul>
+</nav>

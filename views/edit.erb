@@ -1,0 +1,18 @@
+<h1 class="app_title"><a href="http://localhost:4567/memos">memo</a></h1>
+<form action="/memos/<%= params[:id] %>" method="post" class="memo_form">
+  <input type="hidden" name="_method" value="PATCH">
+  <label for="title">タイトル</label>
+  <input type= "text" name="title" value="<%= @title %>" maxlength=20>
+  <label for="content">内容</label>
+  <textarea type= "text" name="content" maxlength=200><%= @content %></textarea>
+  <input type="submit" value="保存">
+</form>
+<nav>
+  <ul class="menu">
+    <li>
+      <form action="/memos/<%= params[:id] %>" method="get">
+        <input type="image" src="/images/Uターン矢印 2.svg" alt="メモ" width="32" height="32">
+      </form>
+    </li>
+  </ul>
+</nav>
