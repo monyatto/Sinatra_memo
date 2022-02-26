@@ -1,7 +1,7 @@
 <h1 class="app_title">memo</h1>
 <article>
   <ul>
-    <% @results.each do |result| %>
+    <% @memos.each do |result| %>
     <li><a href="http://localhost:4567/memos/<%= result["id"] %>" class="link"><%= result["title"] %></a></li>
     <% end %>
   </ul>

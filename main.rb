@@ -3,7 +3,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'erb'
-require 'json'
 require 'pg'
 
 connection = PG::Connection.new(host: 'localhost', dbname: 'memo')
@@ -15,6 +14,10 @@ connection.exec('CREATE TABLE IF NOT EXISTS memos (
 
 helpers do
   include ERB::Util
+
+  def sanitize(text)
+    escape_html(text)
+  end
 end
 
 get '/new' do
@@ -22,50 +25,54 @@ get '/new' do
 end
 
 get '/memos' do
-  @results = connection.exec('SELECT * FROM memos ORDER BY id DESC')
+  @memos = connection.exec('SELECT * FROM memos ORDER BY id DESC')
   erb :memos
 end
 
 post '/memos' do
   title = params[:title]
   content = params[:content]
-  results =
+  memos =
     connection.exec(
       'INSERT INTO memos (title, content, timestamp) VALUES ($1, $2, current_timestamp)RETURNING id', [title, content]
     )
-  results.each do |result|
+  memos.each do |result|
     @id = result['id']
   end
   redirect to("/memos/#{@id}")
 end
 
 get '/memos/:id' do |id|
-  @results = connection.exec("SELECT * FROM memos WHERE id=#{id}")
-  @results.each do |result|
-    @title = result['title']
-    @content = result['content']
+  @memos = connection.exec('SELECT * FROM memos WHERE id = $1', [id.to_i])
+  if @memos.first.nil?
+    erb :not_found
+  else
+    @title = sanitize(@memos.first['title'])
+    @content = sanitize(@memos.first['content'])
+    erb :memo
   end
-  erb :memo
 end
 
 delete '/memos/:id' do |id|
-  connection.exec("DELETE FROM memos WHERE id=#{id}")
+  connection.exec('DELETE FROM memos WHERE id = $1', [id])
   redirect to('/memos')
 end
 
 get '/memos/:id/edit' do |id|
-  @results = connection.exec("SELECT * FROM memos WHERE id=#{id}")
-  @results.each do |result|
-    @title = result['title']
-    @content = result['content']
+  @memos = connection.exec('SELECT * FROM memos WHERE id = $1', [id.to_i])
+  if @memos.first.nil?
+    erb :not_found
+  else
+    @title = sanitize(@memos.first['title'])
+    @content = sanitize(@memos.first['content'])
+    erb :edit
   end
-  erb :edit
 end
 
 patch '/memos/:id' do |id|
   title = params[:title]
   content = params[:content]
-  connection.exec("UPDATE memos SET title = $1, content = $2 WHERE id = #{id}", [title, content])
+  connection.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [title, content, id])
   redirect to("/memos/#{id}")
 end
 
