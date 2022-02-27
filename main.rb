@@ -3,28 +3,20 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'erb'
-require 'json'
+require 'pg'
+
+connection = PG::Connection.new(host: 'localhost', dbname: 'memo')
+connection.exec('CREATE TABLE IF NOT EXISTS memos (
+  id serial primary key,
+  title varchar(20),
+  content varchar(200),
+  timestamp timestamp)')
 
 helpers do
   include ERB::Util
 
   def sanitize(text)
     escape_html(text)
-  end
-
-  def parse_json
-    Dir.glob('*', base: './data').map do |file_name|
-      File.open("./data/#{file_name}") do |file|
-        JSON.parse(file.read, symbolize_names: true)
-      end
-    end
-  end
-
-  def sort_files(files)
-    files.sort do |a, b|
-      [a[:time]] <=> [b[:time]]
-    end
-    files.reverse
   end
 end
 
@@ -33,50 +25,52 @@ get '/new' do
 end
 
 get '/memos' do
-  @memos = sort_files(parse_json)
+  @memos = connection.exec('SELECT * FROM memos ORDER BY id DESC')
   erb :memos
 end
 
 post '/memos' do
-  @id = SecureRandom.uuid
-  @title = params[:title]
-  @content = params[:content]
-  hash = { id: @id, time: Time.new, title: @title, content: @content }
-  File.open("./data/#{hash[:id]}", 'w') do |file|
-    JSON.dump(hash, file)
-  end
+  title = params[:title]
+  content = params[:content]
+  memos =
+    connection.exec(
+      'INSERT INTO memos (title, content, timestamp) VALUES ($1, $2, current_timestamp)RETURNING id', [title, content]
+    )
+  @id = memos.first['id']
   redirect to("/memos/#{@id}")
 end
 
 get '/memos/:id' do |id|
-  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
-  @title = sanitize(json_file[:title])
-  @content = sanitize(json_file[:content])
-  erb :memo
+  @memos = connection.exec('SELECT * FROM memos WHERE id = $1', [id.to_i])
+  if @memos.first.nil?
+    erb :not_found
+  else
+    @title = sanitize(@memos.first['title'])
+    @content = sanitize(@memos.first['content'])
+    erb :memo
+  end
 end
 
-delete '/memos/:id' do
-  File.delete("data/#{params[:id]}")
+delete '/memos/:id' do |id|
+  connection.exec('DELETE FROM memos WHERE id = $1', [id])
   redirect to('/memos')
 end
 
 get '/memos/:id/edit' do |id|
-  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
-  @title = sanitize(json_file[:title])
-  @content = sanitize(json_file[:content])
-  erb :edit
+  @memos = connection.exec('SELECT * FROM memos WHERE id = $1', [id.to_i])
+  if @memos.first.nil?
+    erb :not_found
+  else
+    @title = sanitize(@memos.first['title'])
+    @content = sanitize(@memos.first['content'])
+    erb :edit
+  end
 end
 
 patch '/memos/:id' do |id|
-  json_file = JSON.parse(File.open("./data/#{id}").read, symbolize_names: true)
-  @time = json_file[:time]
-  @title = params[:title]
-  @content = params[:content]
-
-  hash = { id: params[:id], time: @time, title: @title, content: @content }
-  File.open("./data/#{params[:id]}", 'w') do |file|
-    JSON.dump(hash, file)
-  end
+  title = params[:title]
+  content = params[:content]
+  connection.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [title, content, id])
   redirect to("/memos/#{id}")
 end
 

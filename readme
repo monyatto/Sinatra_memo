@@ -1,0 +1,40 @@
+# Sinatra_memo
+フィヨルドブートキャンプの課題「WebアプリからのDB利用」の提出物です。
+
+## 概要
+メモの保存、閲覧、編集、削除ができるWebアプリです。
+メモは20文字以内とタイトルと200文字以内の本文から構成されます。
+
+## 起動までの手順
+
+1. 任意のディレクトリにこのリポジトリのクローンを保存します。
+```
+git clone https://github.com/monyatto/Sinatra_memo_DB.git
+```
+
+2. リポジトリに移動します。
+```
+cd Sinatra_memo_DB
+```
+
+3. PostgreSQLをインストール(既にPostgreSQLをインストール済の場合は不要です)。
+```
+brew install postgresql
+```
+
+4. データーベース「memos」を作成します。
+```
+createdb memos
+```
+
+5. 必要なGemをインストールします。
+```
+bundle install
+```
+pgのインストールでエラーが発生する場合は以下もご参照ください。
+https://github.com/ged/ruby-pg
+
+6. アプリを起動します。
+```
+bundle exec ruby main.rb
+```
