@@ -36,9 +36,7 @@ post '/memos' do
     connection.exec(
       'INSERT INTO memos (title, content, timestamp) VALUES ($1, $2, current_timestamp)RETURNING id', [title, content]
     )
-  memos.each do |result|
-    @id = result['id']
-  end
+  @id = memos.first['id']
   redirect to("/memos/#{@id}")
 end
 
